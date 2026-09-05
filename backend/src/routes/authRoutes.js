@@ -11,7 +11,7 @@ const {
 } = require('../validators/authValidator');
 
 // Customer Registration
-router.post('/register', registerValidation, validate, AuthController.register);
+router.post('/customer/register', registerValidation, validate, AuthController.register);
 
 // Customer Login
 router.post('/customer/login', loginValidation, validate, AuthController.customerLogin);
