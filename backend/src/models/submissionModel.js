@@ -1,9 +1,7 @@
 const pool = require('../config/db');
 
 class SubmissionModel {
-    /**
-     * Create a new form submission
-     */
+    // Create a new form submission
     static async create({
         firstName,
         lastName,
@@ -23,9 +21,7 @@ class SubmissionModel {
         return result.insertId;
     }
 
-    /**
-     * Find a submission by email (for uniqueness check)
-     */
+    //  Find a submission by email (for uniqueness check)
     static async findByEmail(email) {
         const [rows] = await pool.query(
             'SELECT submission_id, email FROM submissions WHERE email = ? LIMIT 1',
@@ -34,9 +30,7 @@ class SubmissionModel {
         return rows[0] || null;
     }
 
-    /**
-     * Find a submission by ID
-     */
+    //  Find a submission by ID
     static async findById(submissionId) {
         const [rows] = await pool.query(
             `SELECT s.submission_id, s.first_name, s.last_name, s.email, s.gender, 
@@ -52,9 +46,7 @@ class SubmissionModel {
         return rows[0] || null;
     }
 
-    /**
-     * Retrieve all submissions with optional gender filter and name search (case-insensitive partial match)
-     */
+    //  Retrieve all submissions with optional gender filter and name search (case-insensitive partial match)
     static async findAll({ gender, search } = {}) {
         let sql = `
             SELECT s.submission_id, s.first_name, s.last_name, s.email, s.gender, 
@@ -87,9 +79,7 @@ class SubmissionModel {
         return rows;
     }
 
-    /**
-     * Update a submission by ID
-     */
+    //  Update a submission by ID
     static async update(submissionId, {
         firstName,
         lastName,
@@ -117,9 +107,7 @@ class SubmissionModel {
         return result.affectedRows > 0;
     }
 
-    /**
-     * Delete a submission by ID
-     */
+    //  Delete a submission by ID
     static async delete(submissionId) {
         const [result] = await pool.query(
             'DELETE FROM submissions WHERE submission_id = ?',

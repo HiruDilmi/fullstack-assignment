@@ -1,10 +1,8 @@
 const SubmissionModel = require('../models/submissionModel');
 
 class SubmissionController {
-    /**
-     * Submit a form (Customer Protected)
-     * POST /api/submissions
-     */
+    // Submit a form (Customer Protected)
+    // POST /api/submissions/submit
     static async createSubmission(req, res, next) {
         try {
             const {
@@ -44,10 +42,8 @@ class SubmissionController {
         }
     }
 
-    /**
-     * Get all submissions with search and filter (Admin Protected)
-     * GET /api/submissions?gender=MALE&search=john
-     */
+    // Get all submissions with search and filter (Admin Protected)
+    // GET /api/submissions?gender=?&search=?
     static async getAllSubmissions(req, res, next) {
         try {
             const { gender, search } = req.query;
@@ -67,10 +63,8 @@ class SubmissionController {
         }
     }
 
-    /**
-     * Get single submission by ID
-     * GET /api/submissions/:id
-     */
+    // Get single submission by ID
+    // GET /api/submissions/get-single/:id
     static async getSubmissionById(req, res, next) {
         try {
             const { id } = req.params;
@@ -94,10 +88,8 @@ class SubmissionController {
         }
     }
 
-    /**
-     * Update a submission (Admin Protected)
-     * PUT /api/submissions/:id
-     */
+    // Update a submission (Admin Protected)
+    // PUT /api/submissions/update/:id
     static async updateSubmission(req, res, next) {
         try {
             const { id } = req.params;
@@ -147,10 +139,8 @@ class SubmissionController {
         }
     }
 
-    /**
-     * Delete a submission (Admin Protected)
-     * DELETE /api/submissions/:id
-     */
+    // Delete a submission (Admin Protected)
+    // DELETE /api/submissions/delete/:id
     static async deleteSubmission(req, res, next) {
         try {
             const { id } = req.params;
