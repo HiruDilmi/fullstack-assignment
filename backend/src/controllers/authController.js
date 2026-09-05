@@ -17,18 +17,16 @@ class AuthController {
             if (!user) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid email.'
+                    message: 'Invalid email.',
+                    message: 'Invalid email or password.'
                 });
             }
 
             const isPasswordValid = await comparePassword(password, user.password);
-            console.log(isPasswordValid)
-            console.log(user.password)
-            console.log(password)
             if (!isPasswordValid) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid password.'
+                    message: 'Invalid email or password.'
                 });
             }
 
@@ -69,7 +67,7 @@ class AuthController {
     }
 
     // Customer Registration
-    // POST /api/auth/register
+    // POST /api/auth/customer/register
     static async register(req, res, next) {
         try {
             const { email, password } = req.body;
@@ -79,7 +77,7 @@ class AuthController {
                 email,
                 password: hashedPassword,
                 role: 'CUSTOMER',
-                status: 1
+                status: 'ACTIVE'
             });
 
             return res.status(201).json({
@@ -148,6 +146,65 @@ class AuthController {
                         role: user.role
                     }
                 }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // Token Refresh
+    // POST /api/auth/refresh
+    static async refreshToken(req, res, next) {
+        try {
+            const { refreshToken } = req.body;
+
+            let decoded;
+            try {
+                decoded = verifyRefreshToken(refreshToken);
+            } catch (err) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid or expired refresh token.'
+                });
+            }
+
+            const user = await UserModel.findById(decoded.userId);
+            if (!user || user.refresh_token !== refreshToken) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Refresh token is invalid or revoked.'
+                });
+            }
+
+            const newAccessToken = generateAccessToken({
+                userId: user.user_id,
+                email: user.email,
+                role: user.role
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: 'Access token refreshed successfully.',
+                data: {
+                    accessToken: newAccessToken
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // Logout
+    // POST /api/auth/logout
+    static async logout(req, res, next) {
+        try {
+            if (req.user && req.user.userId) {
+                await UserModel.clearRefreshToken(req.user.userId);
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Logged out successfully.'
             });
         } catch (error) {
             next(error);
