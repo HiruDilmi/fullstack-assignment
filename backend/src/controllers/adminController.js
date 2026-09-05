@@ -34,6 +34,48 @@ class AdminController {
             next(error);
         }
     }
+
+    //  Fetch active admins
+    //  GET /api/admin/get-active-admins
+    static async fetchActiveAdmin(req, res, next) {
+        try {
+            const admins = await UserModel.findAll({
+                role: ['ADMIN', 'SUPER_ADMIN'],
+                status: 1
+            });
+
+            return res.status(201).json({
+                success: true,
+                message: 'Admins fetched successfully.',
+                data: {
+                    admins
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    //  Fetch inactive admins
+    //  GET /api/admin/get-inactive-admins
+    static async fetchInactiveAdmin(req, res, next) {
+        try {
+            const admins = await UserModel.findAll({
+                role: ['ADMIN', 'SUPER_ADMIN'],
+                status: 0
+            });
+
+            return res.status(201).json({
+                success: true,
+                message: 'Admins fetched successfully.',
+                data: {
+                    admins
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = AdminController;

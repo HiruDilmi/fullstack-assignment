@@ -19,10 +19,4 @@ router.post('/customer/login', loginValidation, validate, AuthController.custome
 // Admin Login
 router.post('/admin/login', loginValidation, validate, AuthController.adminLogin);
 
-// Token Refresh
-router.post('/refresh', refreshValidation, validate, AuthController.refreshToken);
-
-// Logout (Protected)
-router.post('/logout', authenticate, AuthController.logout);
-
 module.exports = router;
