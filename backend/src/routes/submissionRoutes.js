@@ -11,7 +11,7 @@ const {
 
 // Customer Protected: Submit a new form
 router.post(
-    '/',
+    '/submit',
     authenticate,
     authorizeRoles('CUSTOMER'),
     createSubmissionValidation,
@@ -29,7 +29,7 @@ router.get(
 
 // Get single submission by ID (Admin or Customer)
 router.get(
-    '/:id',
+    '/get-single/:id',
     authenticate,
     authorizeRoles('ADMIN', 'SUPER_ADMIN', 'CUSTOMER'),
     SubmissionController.getSubmissionById
@@ -37,7 +37,7 @@ router.get(
 
 // Admin Protected: Update a submission
 router.put(
-    '/:id',
+    '/update/:id',
     authenticate,
     authorizeRoles('ADMIN', 'SUPER_ADMIN'),
     updateSubmissionValidation,
@@ -47,7 +47,7 @@ router.put(
 
 // Admin Protected: Delete a submission
 router.delete(
-    '/:id',
+    '/delete/:id',
     authenticate,
     authorizeRoles('ADMIN', 'SUPER_ADMIN'),
     SubmissionController.deleteSubmission
