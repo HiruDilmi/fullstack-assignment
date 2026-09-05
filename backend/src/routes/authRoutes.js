@@ -1,28 +1,28 @@
-// const express = require('express');
-// const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-// const AuthController = require('../controllers/authController');
-// const { authenticate } = require('../middlewares/authMiddleware');
-// const validate = require('../middlewares/validateMiddleware');
-// const {
-//     registerValidation,
-//     loginValidation,
-//     refreshValidation
-// } = require('../validators/authValidator');
+const AuthController = require('../controllers/authController');
+const { authenticate } = require('../middlewares/authMiddleware');
+const validate = require('../middlewares/validateMiddleware');
+const {
+    registerValidation,
+    loginValidation,
+    refreshValidation
+} = require('../validators/authValidator');
 
-// // Customer Registration
-// router.post('/register', registerValidation, validate, AuthController.register);
+// Customer Registration
+router.post('/register', registerValidation, validate, AuthController.register);
 
-// // Customer Login
-// router.post('/customer/login', loginValidation, validate, AuthController.customerLogin);
+// Customer Login
+router.post('/customer/login', loginValidation, validate, AuthController.customerLogin);
 
-// // Admin Login
-// router.post('/admin/login', loginValidation, validate, AuthController.adminLogin);
+// Admin Login
+router.post('/admin/login', loginValidation, validate, AuthController.adminLogin);
 
-// // Token Refresh
-// router.post('/refresh', refreshValidation, validate, AuthController.refreshToken);
+// Token Refresh
+router.post('/refresh', refreshValidation, validate, AuthController.refreshToken);
 
-// // Logout (Protected)
-// router.post('/logout', authenticate, AuthController.logout);
+// Logout (Protected)
+router.post('/logout', authenticate, AuthController.logout);
 
-// module.exports = router;
+module.exports = router;

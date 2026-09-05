@@ -18,7 +18,7 @@ class AuthController {
                 email,
                 password: hashedPassword,
                 role: 'CUSTOMER',
-                status: 'ACTIVE'
+                status: 1
             });
 
             return res.status(201).json({
