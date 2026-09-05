@@ -1,9 +1,56 @@
 const express = require('express');
 const router = express.Router();
 
-// Placeholder submission routes
-router.get('/', (req, res) => {
-    res.json({ message: 'Submission routes initialized' });
-});
+const SubmissionController = require('../controllers/submissionController');
+const { authenticate, authorizeRoles } = require('../middlewares/authMiddleware');
+const validate = require('../middlewares/validateMiddleware');
+const {
+    createSubmissionValidation,
+    updateSubmissionValidation
+} = require('../validators/submissionValidator');
+
+// Customer Protected: Submit a new form
+router.post(
+    '/',
+    authenticate,
+    authorizeRoles('CUSTOMER'),
+    createSubmissionValidation,
+    validate,
+    SubmissionController.createSubmission
+);
+
+// Admin Protected: Get all submissions (with gender filter & search by name)
+router.get(
+    '/',
+    authenticate,
+    authorizeRoles('ADMIN', 'SUPER_ADMIN'),
+    SubmissionController.getAllSubmissions
+);
+
+// Get single submission by ID (Admin or Customer)
+router.get(
+    '/:id',
+    authenticate,
+    authorizeRoles('ADMIN', 'SUPER_ADMIN', 'CUSTOMER'),
+    SubmissionController.getSubmissionById
+);
+
+// Admin Protected: Update a submission
+router.put(
+    '/:id',
+    authenticate,
+    authorizeRoles('ADMIN', 'SUPER_ADMIN'),
+    updateSubmissionValidation,
+    validate,
+    SubmissionController.updateSubmission
+);
+
+// Admin Protected: Delete a submission
+router.delete(
+    '/:id',
+    authenticate,
+    authorizeRoles('ADMIN', 'SUPER_ADMIN'),
+    SubmissionController.deleteSubmission
+);
 
 module.exports = router;
