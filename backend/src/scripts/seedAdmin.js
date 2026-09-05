@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const pool = require('../config/db');
-const { hashPassword } = require('../utils/password.utils');
+const { hashPassword } = require('../utils/passwordUtils');
 
 async function seedAdmin() {
     const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
