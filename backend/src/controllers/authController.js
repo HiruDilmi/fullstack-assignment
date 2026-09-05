@@ -7,8 +7,66 @@ const {
 } = require('../utils/tokenUtils');
 
 class AuthController {
+    // Admin Login
+    // POST /api/auth/admin/login
+    static async adminLogin(req, res, next) {
+        try {
+            const { email, password } = req.body;
+
+            const user = await UserModel.findByEmail(email);
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid email or password.'
+                });
+            }
+
+            const isPasswordValid = await comparePassword(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid email or password.'
+                });
+            }
+
+            if (user.role !== 'ADMIN') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Access denied. Only administrators are permitted to log in through this portal.'
+                });
+            }
+
+            const payload = {
+                userId: user.user_id,
+                email: user.email,
+                role: user.role
+            };
+
+            const accessToken = generateAccessToken(payload);
+            const refreshToken = generateRefreshToken({ userId: user.user_id });
+
+            await UserModel.updateRefreshToken(user.user_id, refreshToken);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Admin logged in successfully.',
+                data: {
+                    accessToken,
+                    refreshToken,
+                    user: {
+                        id: user.user_id,
+                        email: user.email,
+                        role: user.role
+                    }
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     // Customer Registration
-    // POST /api/auth/register
+    // POST /api/auth/customer/register
     static async register(req, res, next) {
         try {
             const { email, password } = req.body;
@@ -18,7 +76,7 @@ class AuthController {
                 email,
                 password: hashedPassword,
                 role: 'CUSTOMER',
-                status: 1
+                status: 'ACTIVE'
             });
 
             return res.status(201).json({
@@ -78,64 +136,6 @@ class AuthController {
             return res.status(200).json({
                 success: true,
                 message: 'Customer logged in successfully.',
-                data: {
-                    accessToken,
-                    refreshToken,
-                    user: {
-                        id: user.user_id,
-                        email: user.email,
-                        role: user.role
-                    }
-                }
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    // Admin Login
-    // POST /api/auth/admin/login
-    static async adminLogin(req, res, next) {
-        try {
-            const { email, password } = req.body;
-
-            const user = await UserModel.findByEmail(email);
-            if (!user) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid email or password.'
-                });
-            }
-
-            const isPasswordValid = await comparePassword(password, user.password);
-            if (!isPasswordValid) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid email or password.'
-                });
-            }
-
-            if (user.role !== 'ADMIN') {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Access denied. Only administrators are permitted to log in through this portal.'
-                });
-            }
-
-            const payload = {
-                userId: user.user_id,
-                email: user.email,
-                role: user.role
-            };
-
-            const accessToken = generateAccessToken(payload);
-            const refreshToken = generateRefreshToken({ userId: user.user_id });
-
-            await UserModel.updateRefreshToken(user.user_id, refreshToken);
-
-            return res.status(200).json({
-                success: true,
-                message: 'Admin logged in successfully.',
                 data: {
                     accessToken,
                     refreshToken,
