@@ -6,9 +6,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Import routes
-const authRoutes = require('./routes/auth.routes');
-const submissionRoutes = require('./routes/submission.routes');
-const adminRoutes = require('./routes/admin.routes');
+const authRoutes = require('./routes/authRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
