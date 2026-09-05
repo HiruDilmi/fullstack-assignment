@@ -43,6 +43,32 @@ class UserModel {
             [userId]
         );
     }
+
+    // Find users with optional filters (e.g. role, status)
+    static async findAll({ role, status } = {}) {
+        let sql = 'SELECT user_id, email, role, status, created_at FROM users WHERE 1=1';
+        const params = [];
+
+        if (role) {
+            if (Array.isArray(role)) {
+                sql += ` AND role IN (${role.map(() => '?').join(', ')})`;
+                params.push(...role);
+            } else {
+                sql += ' AND role = ?';
+                params.push(role);
+            }
+        }
+
+        if (status !== undefined) {
+            sql += ' AND status = ?';
+            params.push(status);
+        }
+
+        sql += ' ORDER BY created_at DESC';
+
+        const [rows] = await pool.query(sql, params);
+        return rows;
+    }
 }
 
 module.exports = UserModel;

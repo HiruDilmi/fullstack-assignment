@@ -29,7 +29,7 @@ class AuthController {
                 });
             }
 
-            if (user.role !== 'ADMIN') {
+            if (!['ADMIN', 'SUPER_ADMIN'].includes(user.role)) {
                 return res.status(403).json({
                     success: false,
                     message: 'Access denied. Only administrators are permitted to log in through this portal.'

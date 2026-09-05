@@ -5,8 +5,8 @@ const pool = require('../config/db');
 const { hashPassword } = require('../utils/passwordUtils');
 
 async function seedAdmin() {
-    const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
-    const adminPassword = process.env.INITIAL_ADMIN_PASSWORD || 'Admin@1234';
+    const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'superadmin@example.com';
+    const adminPassword = process.env.INITIAL_ADMIN_PASSWORD || 'SuperAdmin@123';
 
     try {
         console.log(`Checking if admin '${adminEmail}' already exists...`);
@@ -20,7 +20,7 @@ async function seedAdmin() {
         const hashedPassword = await hashPassword(adminPassword);
         const [result] = await pool.query(
             'INSERT INTO users (email, password, role, status) VALUES (?, ?, ?, ?)',
-            [adminEmail, hashedPassword, 'ADMIN', 'ACTIVE']
+            [adminEmail, hashedPassword, 'SUPER_ADMIN', 1]
         );
 
         console.log(`\n Successfully seeded initial Admin:`);
