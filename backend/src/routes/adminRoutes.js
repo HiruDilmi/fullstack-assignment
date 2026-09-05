@@ -6,7 +6,7 @@ const { authenticate, authorizeRoles } = require('../middlewares/authMiddleware'
 const validate = require('../middlewares/validateMiddleware');
 const { createAdminValidation } = require('../validators/authValidator');
 
-// Protected Admin Creation (only accessible by authenticated ADMIN)
+// Protected Admin Creation (only accessible by authenticated SUPER_ADMIN)
 router.post(
     '/create-admin',
     authenticate,
