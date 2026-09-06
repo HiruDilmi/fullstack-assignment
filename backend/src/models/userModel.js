@@ -44,6 +44,15 @@ class UserModel {
         );
     }
 
+    // Update user status (1 = active, 0 = inactive)
+    static async updateStatus(userId, status) {
+        const [result] = await pool.query(
+            'UPDATE users SET status = ? WHERE user_id = ?',
+            [status, userId]
+        );
+        return result.affectedRows > 0;
+    }
+
     // Find users with optional filters (e.g. role, status)
     static async findAll({ role, status } = {}) {
         let sql = 'SELECT user_id, email, role, status, created_at FROM users WHERE 1=1';
