@@ -9,9 +9,14 @@ const validate = (req, res, next) => {
             message: err.msg
         }));
 
+        // Provide the specific validation message as the primary message
+        const primaryMessage = formattedErrors.length > 0 
+            ? formattedErrors[0].message 
+            : 'Validation failed';
+
         return res.status(400).json({
             success: false,
-            message: 'Validation failed',
+            message: primaryMessage,
             errors: formattedErrors
         });
     }

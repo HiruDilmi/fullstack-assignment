@@ -19,4 +19,7 @@ router.post('/customer/login', loginValidation, validate, AuthController.custome
 // Admin Login
 router.post('/admin/login', loginValidation, validate, AuthController.adminLogin);
 
+// Refresh Token
+router.post('/refresh', refreshValidation, validate, AuthController.refreshToken);
+
 module.exports = router;
