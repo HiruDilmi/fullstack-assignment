@@ -22,9 +22,30 @@ export function AuthProvider({ children }) {
       localStorage.setItem('user', JSON.stringify(user))
     } else {
       localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
       localStorage.removeItem('user')
     }
   }, [token, user])
+
+  // Listen for background token refresh or logout events from axios interceptor
+  useEffect(() => {
+    const handleTokenRefresh = () => {
+      const newToken = localStorage.getItem('token')
+      if (newToken) setToken(newToken)
+    }
+
+    const handleAuthLogout = () => {
+      setToken(null)
+      setUser(null)
+    }
+
+    window.addEventListener('auth-token-refreshed', handleTokenRefresh)
+    window.addEventListener('auth-logout', handleAuthLogout)
+    return () => {
+      window.removeEventListener('auth-token-refreshed', handleTokenRefresh)
+      window.removeEventListener('auth-logout', handleAuthLogout)
+    }
+  }, [])
 
   // Customer Login
   const customerLogin = async (email, password) => {
@@ -34,7 +55,12 @@ export function AuthProvider({ children }) {
         email,
         password,
       })
-      const { accessToken, user: userData } = response.data.data
+      const { accessToken, refreshToken, user: userData } = response.data.data
+      localStorage.setItem('token', accessToken)
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken)
+      }
+      localStorage.setItem('user', JSON.stringify(userData))
       setToken(accessToken)
       setUser(userData)
       return { success: true, user: userData }
@@ -76,7 +102,12 @@ export function AuthProvider({ children }) {
         email,
         password,
       })
-      const { accessToken, user: userData } = response.data.data
+      const { accessToken, refreshToken, user: userData } = response.data.data
+      localStorage.setItem('token', accessToken)
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken)
+      }
+      localStorage.setItem('user', JSON.stringify(userData))
       setToken(accessToken)
       setUser(userData)
       return { success: true, user: userData }
@@ -94,6 +125,7 @@ export function AuthProvider({ children }) {
     setToken(null)
     setUser(null)
     localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
   }
 
@@ -104,6 +136,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: Boolean(token && user),
     isCustomer: user?.role === 'CUSTOMER',
     isAdmin: user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN',
+    isSuperAdmin: user?.role === 'SUPER_ADMIN',
     customerLogin,
     customerRegister,
     adminLogin,
