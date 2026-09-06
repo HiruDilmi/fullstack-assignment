@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Mail, Lock, ArrowRight, AlertCircle, CheckCircle, Loader2, UserPlus } from 'lucide-react'
@@ -10,6 +10,17 @@ export default function CustomerRegister() {
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Auto-dismiss notifications after 5 seconds
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage('')
+        setSuccessMessage('')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [errorMessage, successMessage])
 
   const { customerRegister, customerLogin } = useAuth()
   const navigate = useNavigate()
