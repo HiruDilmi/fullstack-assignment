@@ -1138,7 +1138,7 @@ export default function AdminDashboard() {
             </p>
             <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-left text-xs text-amber-800">
               <p>
-                ⚠️ <strong>Impact:</strong> Once inactivated, this admin’s database status will be set to <strong>0</strong>, their active sessions will be terminated, and they will be barred from logging into the portal.
+                <strong>Impact:</strong> Once inactivated, their active sessions will be terminated, and they will be barred from logging into the portal.
               </p>
             </div>
             <div className="mt-6 flex justify-center gap-3">
