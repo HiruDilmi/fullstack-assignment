@@ -27,6 +27,14 @@ router.get(
     SubmissionController.getAllSubmissions
 );
 
+// Get own application (Customer or Admin)
+router.get(
+    '/my-application',
+    authenticate,
+    authorizeRoles('CUSTOMER', 'ADMIN', 'SUPER_ADMIN'),
+    SubmissionController.getMySubmission
+);
+
 // Get single submission by ID (Admin or Customer)
 router.get(
     '/get-single/:id',
@@ -35,11 +43,11 @@ router.get(
     SubmissionController.getSubmissionById
 );
 
-// Admin Protected: Update a submission
+// Update a submission (Admin or Application Owner Customer)
 router.put(
     '/update/:id',
     authenticate,
-    authorizeRoles('ADMIN', 'SUPER_ADMIN'),
+    authorizeRoles('ADMIN', 'SUPER_ADMIN', 'CUSTOMER'),
     updateSubmissionValidation,
     validate,
     SubmissionController.updateSubmission
