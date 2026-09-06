@@ -19,6 +19,7 @@
   },
   "scripts": {
     "start": "npm start --prefix backend",
-    "dev": "npm run dev --prefix backend"
+    "dev": "npm run dev --prefix backend",
+    "db:init": "npm run db:init --prefix backend"
   }
 }
