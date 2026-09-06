@@ -11,12 +11,15 @@ const {
 } = require('../validators/authValidator');
 
 // Customer Registration
-router.post('/register', registerValidation, validate, AuthController.register);
+router.post('/customer/register', registerValidation, validate, AuthController.register);
 
 // Customer Login
 router.post('/customer/login', loginValidation, validate, AuthController.customerLogin);
 
 // Admin Login
 router.post('/admin/login', loginValidation, validate, AuthController.adminLogin);
+
+// Refresh Token
+router.post('/refresh', refreshValidation, validate, AuthController.refreshToken);
 
 module.exports = router;

@@ -17,16 +17,18 @@ class AuthController {
             if (!user) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid email.',
-                    message: 'Invalid email or password.'
+                    message: 'Invalid email.'
                 });
             }
 
             const isPasswordValid = await comparePassword(password, user.password);
+            console.log(password);
+            console.log(user.password);
+            console.log(isPasswordValid);
             if (!isPasswordValid) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid email or password.'
+                    message: 'Invalid password.'
                 });
             }
 
@@ -34,6 +36,13 @@ class AuthController {
                 return res.status(403).json({
                     success: false,
                     message: 'Access denied. Only administrators are permitted to log in through this portal.'
+                });
+            }
+
+            if (user.status !== 1 && user.status !== '1' && user.status !== 'ACTIVE') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Account is inactive. Please contact a Super Administrator.'
                 });
             }
 
@@ -77,7 +86,7 @@ class AuthController {
                 email,
                 password: hashedPassword,
                 role: 'CUSTOMER',
-                status: 'ACTIVE'
+                status: 1
             });
 
             return res.status(201).json({
@@ -104,7 +113,7 @@ class AuthController {
             if (!user) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid email or password.'
+                    message: 'Invalid email.'
                 });
             }
 
@@ -112,7 +121,7 @@ class AuthController {
             if (!isPasswordValid) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid email or password.'
+                    message: 'Invalid password.'
                 });
             }
 
