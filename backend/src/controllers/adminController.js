@@ -76,6 +76,74 @@ class AdminController {
             next(error);
         }
     }
+
+    // Inactivate an admin account (Protected - SUPER_ADMIN only)
+    // PATCH /api/admin/inactivate-admin/:id
+    static async inactivateAdmin(req, res, next) {
+        try {
+            const { id } = req.params;
+
+            const user = await UserModel.findById(id);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Administrator account not found.'
+                });
+            }
+
+            if (user.role === 'SUPER_ADMIN') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Super Administrator accounts cannot be inactivated.'
+                });
+            }
+
+            await UserModel.updateStatus(id, 0);
+            await UserModel.clearRefreshToken(id);
+
+            return res.status(200).json({
+                success: true,
+                message: `Administrator ${user.email} has been inactivated.`,
+                data: {
+                    userId: user.user_id,
+                    email: user.email,
+                    status: 0
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // Activate an admin account (Protected - SUPER_ADMIN only)
+    // PATCH /api/admin/activate-admin/:id
+    static async activateAdmin(req, res, next) {
+        try {
+            const { id } = req.params;
+
+            const user = await UserModel.findById(id);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Administrator account not found.'
+                });
+            }
+
+            await UserModel.updateStatus(id, 1);
+
+            return res.status(200).json({
+                success: true,
+                message: `Administrator ${user.email} has been reactivated.`,
+                data: {
+                    userId: user.user_id,
+                    email: user.email,
+                    status: 1
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = AdminController;

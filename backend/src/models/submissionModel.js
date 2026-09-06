@@ -46,13 +46,58 @@ class SubmissionModel {
         return rows[0] || null;
     }
 
+    //  Find a submission by user_created (user_id)
+    static async findByUserId(userId) {
+        const [rows] = await pool.query(
+            `SELECT s.submission_id, s.first_name, s.last_name, s.email, s.gender, 
+                    s.mobile_number, s.address, s.feedback,
+                    s.user_created, uc.email AS user_created_email, s.date_created,
+                    s.user_modified, um.email AS user_modified_email, s.date_modified
+             FROM submissions s
+             LEFT JOIN users uc ON s.user_created = uc.user_id
+             LEFT JOIN users um ON s.user_modified = um.user_id
+             WHERE s.user_created = ?
+             ORDER BY s.date_created DESC
+             LIMIT 1`,
+            [userId]
+        );
+        return rows[0] || null;
+    }
+
+    //  Find a submission by user_id OR email (for logged-in customer profile matching)
+    static async findByUserIdOrEmail(userId, email) {
+        const [rows] = await pool.query(
+            `SELECT s.submission_id, s.first_name, s.last_name, s.email, s.gender, 
+                    s.mobile_number, s.address, s.feedback,
+                    s.user_created, uc.email AS user_created_email, s.date_created,
+                    s.user_modified, um.email AS user_modified_email, s.date_modified
+             FROM submissions s
+             LEFT JOIN users uc ON s.user_created = uc.user_id
+             LEFT JOIN users um ON s.user_modified = um.user_id
+             WHERE s.user_created = ? OR (LOWER(s.email) = LOWER(?) AND ? IS NOT NULL AND ? != '')
+             ORDER BY (s.user_created = ?) DESC, s.date_created DESC
+             LIMIT 1`,
+            [userId, email || '', email || '', email || '', userId]
+        );
+        return rows[0] || null;
+    }
+
+    // Link unassociated submission to customer's user_id
+    static async linkUserCreated(submissionId, userId) {
+        if (!submissionId || !userId) return;
+        await pool.query(
+            'UPDATE submissions SET user_created = ? WHERE submission_id = ? AND user_created IS NULL',
+            [userId, submissionId]
+        );
+    }
+
     //  Retrieve all submissions with optional gender filter and name search (case-insensitive partial match)
     static async findAll({ gender, search } = {}) {
         let sql = `
             SELECT s.submission_id, s.first_name, s.last_name, s.email, s.gender, 
-                   s.mobile_number, s.address, s.feedback,
-                   s.user_created, uc.email AS user_created_email, s.date_created,
-                   s.user_modified, um.email AS user_modified_email, s.date_modified
+                    s.mobile_number, s.address, s.feedback,
+                    s.user_created, uc.email AS user_created_email, s.date_created,
+                    s.user_modified, um.email AS user_modified_email, s.date_modified
             FROM submissions s
             LEFT JOIN users uc ON s.user_created = uc.user_id
             LEFT JOIN users um ON s.user_modified = um.user_id
@@ -88,7 +133,8 @@ class SubmissionModel {
         mobileNumber,
         address,
         feedback,
-        userModified
+        userModified,
+        userCreated
     }) {
         const [result] = await pool.query(
             `UPDATE submissions 
@@ -100,9 +146,10 @@ class SubmissionModel {
                  address = ?, 
                  feedback = ?, 
                  user_modified = ?, 
+                 user_created = COALESCE(user_created, ?),
                  date_modified = NOW()
              WHERE submission_id = ?`,
-            [firstName, lastName, email, gender, mobileNumber, address, feedback, userModified, submissionId]
+            [firstName, lastName, email, gender, mobileNumber, address, feedback, userModified, userCreated || null, submissionId]
         );
         return result.affectedRows > 0;
     }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Mail, Lock, ArrowRight, AlertCircle, Loader2, UserCheck } from 'lucide-react'
@@ -8,6 +8,16 @@ export default function CustomerLogin() {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Auto-dismiss error notification after 5 seconds
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage('')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [errorMessage])
 
   const { customerLogin } = useAuth()
   const navigate = useNavigate()
