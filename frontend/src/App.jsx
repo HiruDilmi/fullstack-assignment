@@ -7,6 +7,8 @@ import Home from './pages/Home'
 import CustomerLogin from './pages/CustomerLogin'
 import CustomerRegister from './pages/CustomerRegister'
 import AdminLogin from './pages/AdminLogin'
+import ApplicationPage from './pages/ApplicationPage'
+// import AdminDashboard from './pages/AdminDashboard'
 
 function App() {
   return (
@@ -24,14 +26,14 @@ function App() {
 
               {/* Customer Protected Routes */}
               <Route element={<ProtectedRoute allowedRoles={['CUSTOMER']} />}>
-                {/* <Route path="/apply" element={<ApplicationPage />} /> */}
-                {/* <Route path="/application" element={<ApplicationPage />} /> */}
+                <Route path="/apply" element={<ApplicationPage />} />
+                <Route path="/application" element={<ApplicationPage />} />
               </Route>
 
               {/* Admin Protected Routes */}
-              {/* <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']} />}> */}
-                {/* <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
-              {/* </Route> */}
+              {/* <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']} />}>
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              </Route> */}
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />

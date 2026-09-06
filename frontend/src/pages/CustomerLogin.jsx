@@ -12,7 +12,8 @@ export default function CustomerLogin() {
   const { customerLogin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const redirectPath = location.state?.from?.pathname || '/apply'
+  const from = location.state?.from?.pathname
+  const redirectPath = from && from !== '/' ? from : '/apply'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -46,7 +47,7 @@ export default function CustomerLogin() {
                 Customer Portal
               </h1>
               <p className="mt-2 text-sm text-slate-600">
-                Sign in to submit or manage your application
+                Sign in to update your profile
               </p>
             </div>
 

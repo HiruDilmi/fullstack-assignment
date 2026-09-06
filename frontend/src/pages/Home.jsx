@@ -1,9 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { FileText, Shield, ArrowRight, CheckCircle2, UserCheck } from 'lucide-react'
 
 export default function Home() {
   const { isAuthenticated, user, isCustomer, isAdmin } = useAuth()
+
+  if (isAuthenticated && isCustomer) {
+    return <Navigate to="/apply" replace />
+  }
 
   return (
     <div className="relative overflow-hidden py-16 sm:py-24">
@@ -20,7 +24,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-600/25 transition-all hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-600/40 hover:scale-[1.02] active:scale-95"
               >
                 <FileText className="h-5 w-5" />
-                Submit Your Application
+                Create Your Profile
                 <ArrowRight className="h-4 w-4" />
               </Link>
             ) : isAdmin ? (

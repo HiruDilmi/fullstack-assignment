@@ -64,7 +64,7 @@ export default function CustomerRegister() {
                 Create Customer Account
               </h1>
               <p className="mt-2 text-sm text-slate-600">
-                Register to submit and track your applications
+                Sign Up to Create Your Profile
               </p>
             </div>
 
